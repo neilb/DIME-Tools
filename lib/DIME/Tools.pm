@@ -42,7 +42,7 @@ our @EXPORT = qw(
 	
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 1;
 __END__
@@ -161,6 +161,10 @@ And call print_content_data if what you want is to get a reference to the conten
 
 Direct Internet Message Encapsulation draft:
  http://www.gotdotnet.com/team/xml_wsspecs/dime/dime.htm
+
+DIME::Message
+DIME::Payload
+DIME::Record
 
 =head1 AUTHOR
 

@@ -4,5 +4,5 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'DIME::Tools',
-    'VERSION_FROM'	=> 'lib/DIME/Message.pm', # finds $VERSION
+    'VERSION_FROM'	=> 'lib/DIME/Tools.pm', # finds $VERSION
 );

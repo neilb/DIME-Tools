@@ -23,6 +23,7 @@ use warnings;
 use Data::UUID;
 use DIME::Record;
 use IO::Scalar;
+use IO::File;
 
 require Exporter;
 
@@ -388,54 +389,101 @@ __END__
 
 =head1 NAME
 
-DIME - Perl extension for blah blah blah
+DIME::Payload - implementation of a payload of a DIME message
 
 =head1 SYNOPSIS
 
-  use DIME;
-  blah blah blah
+  # Create a standard DIME message from an existing file
+  # and a string
 
-=head1 ABSTRACT
+  use DIME::Payload;
+  
+  $payload1 = new DIME::Payload;
+  $payload1->attach(Path => 'existingfile.jpg',
+		    MIMEType => 'image/jpeg',
+		    Dynamic => 1);
 
-  This should be the abstract for DIME.
-  The abstract is used when making PPD (Perl Package Description) files.
-  If you don't want an ABSTRACT you should also edit Makefile.PL to
-  remove the ABSTRACT_FROM option.
+  $payload2 = new DIME::Payload;
+  my $data = 'Hello World!!!';
+  $payload2->attach(Data => \$data,	
+		    MIMEType => 'text/plain');
+
+  my $message = new DIME::Message;
+  $message->add_payload($payload1);
+  $message->add_payload($payload2);
 
 =head1 DESCRIPTION
 
-Stub documentation for DIME, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+DIME::Payload represents the content of DIME message. A message is composed of one or many Payload objects.
 
-Blah blah blah.
+There are two types of DIME payloads: chunked and not chunked. A DIME message that isn't chunked has only one record with all the Payload content. A chunked message is splited in several records, allowing to sender and receiver process the content without know the total size of this.
 
-=head2 EXPORT
+=head1 CHUNKED AND DYNAMIC CONTENT
 
-None by default.
+To create a chunked message you have to specify the Chunked key:
 
+	# This create a dynamic payload with records of 16384 bytes
 
+	my $payload = new DIME::Payload;
+	$payload->attach(Path => 'bigfile.avi',
+			 Chunked => 16384,
+			 Dynamic => 1);
 
-=head1 SEE ALSO
+	# You can encode all the payload at once:
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+	my $dime_encoded_message = ${$payload->print_data()};
 
-If you have a mailing list set up for your module, mention it here.
+	# Or, if you prefer, you can generate each chunk
 
-If you have a web site set up for your module, mention it here.
+	my $ret;
+	do
+	{
+		$chunk = ${$payload->print_chunk_data()};
+	} while ($chunk ne '');
+	
+
+The Dynamic key is used to avoid load all the file in memory. What DIME::Payload does is to open the file and, when it need more content, read from the file. If you don't set the Dynamic key, all the data is loaded in memory.
+
+=head1 CONTENT TYPE
+
+To specify the type of content of a Payload, you should use the MIMEType and URIType keys:
+
+	# MIME media-type
+	my $payload = new DIME::Payload;
+	$payload->attach(Path => 'image.jpg',
+			 MIMEType => 'image/jpeg');
+
+	# absolute URI 
+	my $payload = new DIME::Payload;
+	$payload->attach(Path => 'message.xml',
+			 URIType => 'http://schemas.xmlsoap.org/soap/envelope/');
+
+=head1 PAYLOAD IDENTIFIER
+
+When you create a new Payload, a unique identifier is generated automatically. You can get/set it with the id() method:
+
+	my $payload = new DIME::Payload;
+	print $payload->id();
 
 =head1 AUTHOR
 
-A. U. Thor, E<lt>a.u.thor@a.galaxy.far.far.awayE<gt>
+Domingo Alcazar Larrea, E<lt>dalcazar@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2004 by A. U. Thor
+Copyright (C) 2004 Domingo Alcázar Larrea
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself. 
+This program is free software; you can redistribute it and/or
+modify it under the terms of the version 2 of the GNU General
+Public License as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307
 
 =cut
