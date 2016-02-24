@@ -1,6 +1,7 @@
 Revision history for Perl module DIME::Tools
 
 0.04 2016-02-24 NEILB
+    - Made testsuite at least test loading of DIME::Tools
     - Changed format of this file to follow CPAN::Changes::Spec
 
 0.03 2004-02-16 DALCAZAR

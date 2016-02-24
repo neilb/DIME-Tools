@@ -224,7 +224,7 @@ sub attach
         		
 	        		my $record = new DIME::Record($self);
         		
-				my $data_io = new IO::Scalar $data;
+				my $data_io = new IO::Scalar \$data;
 		                $record->data($data_io); 
 
 			        $self->add_record($record);
