@@ -1,8 +1,9 @@
-DIME-Tools version 0.03
-=======================
+
+                DIME-Tools
 
 DIME-Tools is a collection of modules to parse and generate DIME messages.
-DIME stands for Direct Internet Message Encapsulation  and defines a way of encode content in a specified binary format.
+DIME stands for Direct Internet Message Encapsulation,
+and defines a way of encode content in a specified binary format.
 
 It you want to know more about DIME, you can read the next draft:
 
