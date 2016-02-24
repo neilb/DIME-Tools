@@ -1,4 +1,4 @@
-# Copyright (C) 2004 Domingo Alc·zar Larrea
+# Copyright (C) 2004 Domingo Alc√°zar Larrea
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the version 2 of the GNU General
@@ -18,49 +18,21 @@ package DIME::Identifier;
 use 5.008;
 use strict;
 use warnings;
-
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
-
-our $VERSION = '0.01';
+require Data::UUID;
 
 
 sub new
 {
 	my $class = shift;
-	my $this = {			
-		};
-	if( $^O eq 'MSWin32')
-	{
-		require UUID;
-		my $uuid;
-		my $string;
-		UUID::generate($uuid); 
-		UUID::unparse($uuid, $string); 
-		return 'uuid:'.$string;
-	}
-	else
-	{
-		require Data::UUID;
-		my $du = new Data::UUID;
-		return 'uuid:'.$du->create_str();
-	}
+	my $this  = {};
+
+    my $du = Data::UUID->new();
+    return 'uuid:'.$du->create_str();
 }
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -69,7 +41,7 @@ DIME::Identifier - Class that generate identifiers for DIME payloads
 =head1 SYNOPSIS
 
   use DIME::Identifier;
-  my $id = new DIME::Identifier;
+  my $id = DIME::Identifier->new;
 
 =head1 DESCRIPTION
 
@@ -88,7 +60,7 @@ Domingo Alcazar Larrea, E<lt>dalcazar@cpan.orgE<gt>
 =head1 COPYRIGHT AND LICENSE
 
 
-Copyright (C) 2004 Domingo Alc·zar Larrea
+Copyright (C) 2004 Domingo Alc√°zar Larrea
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the version 2 of the GNU General
@@ -104,3 +76,4 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307
 
 =cut
+

@@ -1,4 +1,4 @@
-# Copyright (C) 2004 Domingo Alc·zar Larrea
+# Copyright (C) 2004 Domingo Alc√°zar Larrea
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the version 2 of the GNU General
@@ -21,32 +21,9 @@ use strict;
 use warnings;
 
 
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use DIME ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
-
-our $VERSION = '0.03';
-
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -54,21 +31,26 @@ DIME::Tools - modules for parsing and generate DIME messages
 
 =head1 SYNOPSIS
 
+This is a collection of modules for processing DIME messages.
+It hasn't been actively developed since 2004,
+and the release in 2016 was to get the distribution following
+CPAN conventions, as there is one distribution depending on it.
+
 	Generating DIME messages
 	========================
 
-		my $payload = new DIME::Payload;
+		my $payload = DIME::Payload->new();
 		$payload->attach(Path => "/mydata/index.html",
 		                 MIMEType => 'text/html',
 		                 Dynamic => 1);
 
-		my $payload2 = new DIME::Payload;
+		my $payload2 = DIME::Payload->new();
 		$payload2->attach( Data => "HELLO WORLD!!!",
 		                   MIMEType => 'text/plain' );
 
-		my $message = new DIME::Message;
+		my $message = DIME::Message->new();
 
-                my $payload = new DIME::Payload;
+                my $payload = DIME::Payload->new();
                 $payload->attach(Path => "/mydata/index.html",
                                  MIMEType => 'text/html',
                                  Dynamic => 1);
@@ -81,20 +63,20 @@ DIME::Tools - modules for parsing and generate DIME messages
 	Parsing DIME messages
 	=====================
 
-	        my $parser = new DIME::Parser();
+	        my $parser = DIME::Parser->new();
 
 		# Open a file with a dime encoded message
-	        $f = new IO::File("dime.message","r");
+	        $f = IO::File->new("dime.message","r");
 	        my $message = $parser->parse($f);
 	        $f->close();
-		
+
 		# Print the content of each payload to STDOUT
 	        for my $i ($message->payloads())
 	        {
 	                print $i->print_content(\*STDOUT);
 	        }
-	
- 
+
+
 =head1 DESCRIPTION
 
 DIME-tools is a collection of DIME:: modules for parse and generate DIME encoded messages ( Direct Internet Message Encapsulation ). DIME-tools support single-record and chunked payloads for sending big attachments.
@@ -103,7 +85,7 @@ DIME-tools is a collection of DIME:: modules for parse and generate DIME encoded
 
 For any content you want to send in a message, you have to create a Payload object:
 
-	my $payload = new DIME::Payload;
+	my $payload = DIME::Payload->new();
         $payload->attach(Path => "/mydata/index.html",
                          MIMEType => 'text/html',
                          Dynamic => 1);
@@ -124,7 +106,7 @@ With the attach method you can specify the next keys:
 
 =head1 ATTACH A PAYLOAD TO A MESSAGE
 
-	my $message = new DIME::Message;
+	my $message = DIME::Message->new();
 	$message->add_payload($payload);
 
 =head1 PRINT A ENCODED MESSAGE
@@ -133,7 +115,7 @@ With the attach method you can specify the next keys:
 	$message->print(\*STDOUT);
 
 	or
-	
+
 	# print_data returns a reference to a scalar
 	print ${$message->print_data()};
 
@@ -141,8 +123,8 @@ With the attach method you can specify the next keys:
 
 All you have to do is create a DIME::Parser object and call the parse method with a IO::Handle to a DIME message. Then you can iterate over the $message->payloads() array to get the contents of the message:
 
-	my $parser = new DIME::Parser();
-	$f = new IO::File("dime.message","r");
+	my $parser = DIME::Parser->new();
+	$f = IO::File->new("dime.message","r");
 	my $message = $parser->parse($f);
 	$f->close();
 	for my $i ($message->payloads())
@@ -151,7 +133,7 @@ All you have to do is create a DIME::Parser object and call the parse method wit
 	}
 
 You can also call to parse_data if you have a DIME message in a scalar variable:
-	
+
 	my $dime_message;
 	my $message = $parser->parse_data(\$dime_message);
 
@@ -173,7 +155,7 @@ Domingo Alcazar Larrea, E<lt>dalcazar@cpan.orgE<gt>
 =head1 COPYRIGHT AND LICENSE
 
 
-Copyright (C) 2004 Domingo Alc·zar Larrea
+Copyright (C) 2004 Domingo Alc√°zar Larrea
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the version 2 of the GNU General

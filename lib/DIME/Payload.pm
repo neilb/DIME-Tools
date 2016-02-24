@@ -1,4 +1,4 @@
-# Copyright (C) 2004 Domingo Alc·zar Larrea
+# Copyright (C) 2004 Domingo Alc√°zar Larrea
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the version 2 of the GNU General
@@ -24,29 +24,6 @@ use Data::UUID;
 use DIME::Record;
 use IO::Scalar;
 use IO::File;
-
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use DIME ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
-
-our $VERSION = '0.01';
 
 
 sub new
@@ -75,7 +52,7 @@ sub generate_uuid
 {
         my $self = shift;
         # Generate a new UUID to identify the record
-        my $duuid = new Data::UUID;
+        my $duuid = Data::UUID->new();
         my $uuid = 'uuid:'.$duuid->create_str();
         $self->id($uuid);
 }
@@ -173,7 +150,7 @@ sub attach
 
  	if(defined($params{Path}))
         {
-	        my $file = new IO::File($params{Path},"r");
+	        my $file = IO::File->new($params{Path},"r");
                 if($file)
                 {
 
@@ -210,7 +187,7 @@ sub attach
 	{
 	        if(defined($params{Chunked}))
 	        {
-      			my $data_stream = new IO::Scalar $data;
+      			my $data_stream = IO::Scalar->new($data);
 			my $record;
 			for(my $i=0;$record = $self->create_chunk_record($data_stream);$i++)
 			{
@@ -222,9 +199,9 @@ sub attach
 	        {
         			# The attachment goes in one record
         		
-	        		my $record = new DIME::Record($self);
+	        		my $record = DIME::Record->new($self);
         		
-				my $data_io = new IO::Scalar \$data;
+				my $data_io = IO::Scalar->new(\$data);
 		                $record->data($data_io); 
 
 			        $self->add_record($record);
@@ -251,7 +228,7 @@ sub print
 		}
 		else
 		{
-			my $record = new DIME::Record($self);
+			my $record = DIME::Record->new($self);
 			$record->data($self->{_STREAM});
 			$record->mb(1) if($self->mb());
 			$record->me(1) if($self->me());
@@ -286,7 +263,7 @@ sub print_content_data
 {
 	my $self = shift;
 	my $data;
-	my $io = new IO::Scalar \$data;
+	my $io = IO::Scalar->new(\$data);
 	$self->print_content($io);
 	$io->close();
 	return \$data;
@@ -296,7 +273,7 @@ sub print_data
 {
 	my $self = shift;
 	my $data;
-	my $io = new IO::Scalar \$data;
+	my $io = IO::Scalar->new(\$data);
 	$self->print($io);
 	$io->close();
 	return \$data;
@@ -306,7 +283,7 @@ sub print_chunk_data
 {
 	my $self = shift;
 	my $data;
-	my $io = new IO::Scalar \$data;
+	my $io = IO::Scalar->new(\$data);
 	$self->print_chunk($io);
 	$io->close();
 	return \$data;
@@ -341,8 +318,8 @@ sub create_chunk_record
 	$bytes_read = $in_stream->read($buf,$self->{_CHUNK_SIZE});
 	if($bytes_read)
 	{
-		$record = new DIME::Record($self);
-		my $io_data = new IO::Scalar \$buf;
+		$record = DIME::Record->new($self);
+		my $io_data = IO::Scalar->new(\$buf);
 		$record->data($io_data);
 		if($self->{_FIRST_RECORD})
 		{
@@ -384,8 +361,8 @@ sub set_uri_type
 }					                	
 
 1;
-__END__
-# Below is stub documentation for your module. You'd better edit it!
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -397,18 +374,18 @@ DIME::Payload - implementation of a payload of a DIME message
   # and a string
 
   use DIME::Payload;
-  
-  $payload1 = new DIME::Payload;
+
+  $payload1 = DIME::Payload->new();
   $payload1->attach(Path => 'existingfile.jpg',
 		    MIMEType => 'image/jpeg',
 		    Dynamic => 1);
 
-  $payload2 = new DIME::Payload;
+  $payload2 = DIME::Payload->new();
   my $data = 'Hello World!!!';
   $payload2->attach(Data => \$data,	
 		    MIMEType => 'text/plain');
 
-  my $message = new DIME::Message;
+  my $message = DIME::Message->new();
   $message->add_payload($payload1);
   $message->add_payload($payload2);
 
@@ -424,7 +401,7 @@ To create a chunked message you have to specify the Chunked key:
 
 	# This create a dynamic payload with records of 16384 bytes
 
-	my $payload = new DIME::Payload;
+	my $payload = DIME::Payload->new();
 	$payload->attach(Path => 'bigfile.avi',
 			 Chunked => 16384,
 			 Dynamic => 1);
@@ -440,7 +417,7 @@ To create a chunked message you have to specify the Chunked key:
 	{
 		$chunk = ${$payload->print_chunk_data()};
 	} while ($chunk ne '');
-	
+
 
 The Dynamic key is used to avoid load all the file in memory. What DIME::Payload does is to open the file and, when it need more content, read from the file. If you don't set the Dynamic key, all the data is loaded in memory.
 
@@ -449,12 +426,12 @@ The Dynamic key is used to avoid load all the file in memory. What DIME::Payload
 To specify the type of content of a Payload, you should use the MIMEType and URIType keys:
 
 	# MIME media-type
-	my $payload = new DIME::Payload;
+	my $payload = DIME::Payload->new();
 	$payload->attach(Path => 'image.jpg',
 			 MIMEType => 'image/jpeg');
 
 	# absolute URI 
-	my $payload = new DIME::Payload;
+	my $payload = DIME::Payload->new();
 	$payload->attach(Path => 'message.xml',
 			 URIType => 'http://schemas.xmlsoap.org/soap/envelope/');
 
@@ -462,7 +439,7 @@ To specify the type of content of a Payload, you should use the MIMEType and URI
 
 When you create a new Payload, a unique identifier is generated automatically. You can get/set it with the id() method:
 
-	my $payload = new DIME::Payload;
+	my $payload = DIME::Payload->new();
 	print $payload->id();
 
 =head1 AUTHOR
@@ -471,7 +448,7 @@ Domingo Alcazar Larrea, E<lt>dalcazar@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2004 Domingo Alc·zar Larrea
+Copyright (C) 2004 Domingo Alc√°zar Larrea
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the version 2 of the GNU General
