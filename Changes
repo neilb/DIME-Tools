@@ -2,6 +2,7 @@ Revision history for Perl module DIME::Tools
 
 0.05 2021-03-19 NEILB
     - switched to github issues for bug tracker
+    - improved formatting of documentation
 
 0.04 2016-02-24 NEILB
     - Switched to Dist::Zilla, which fixed the lack of META.* files,
